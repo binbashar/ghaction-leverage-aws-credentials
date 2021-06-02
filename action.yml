@@ -1,0 +1,36 @@
+name: "Set up Leverage AWS credentials"
+description: 'Setup AWS credentials using Binbash Leverage convention'
+
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS credentials
+      run: |
+        mkdir -p ~/.aws/bb
+        cat <<EOF > ~/.aws/bb/config
+        [profile bb-apps-prd-devops]
+        output=json
+        region=us-east-1
+        role_arn=arn:aws:iam::${{ secrets.AWS_PRD_ACCOUNT_ID }}:role/DeployMaster
+        source_profile=bb-security
+
+        [profile bb-apps-devstg-devops]
+        output=json
+        region=us-east-1
+        role_arn=arn:aws:iam::${{ secrets.AWS_DEVSTG_ACCOUNT_ID }}:role/DeployMaster
+        source_profile=bb-security
+
+        [profile bb-shared-devops]
+        output=json
+        region=us-east-1
+        role_arn=arn:aws:iam::${{ secrets.AWS_SHARED_ACCOUNT_ID }}:role/DeployMaster
+        source_profile=bb-security
+        EOF
+
+        cat <<EOF > ~/.aws/bb/credentials
+        [bb-security]
+        aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        region=us-east-1
+        output=json
+        EOF

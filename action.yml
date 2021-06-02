@@ -1,37 +1,60 @@
 name: "Set up Leverage AWS credentials"
 description: 'Setup AWS credentials using Binbash Leverage convention'
 
+inputs:
+  aws_prd_account_id:
+    description: 'AWS PRD Account ID'
+    required: true
+    default: '0000000000'
+  aws_devstg_account_id:
+    description: 'AWS DEVSTG Account ID'
+    required: true
+    default: '0000000000'
+  aws_shared_account_id:
+    description: 'AWS SHARED Account ID'
+    required: true
+    default: '0000000000'
+  aws_access_key_id:
+    description: 'AWS Access Key ID'
+    required: true
+    default: 'UNDEFINED'
+  aws_secret_access_key:
+    description: 'AWS Access Key ID'
+    required: true
+    default: 'UNDEFINED'
+
 runs:
   using: composite
   steps:
     - name: Configure AWS credentials
       shell: bash
       run: |
+        set +x
         mkdir -p ~/.aws/bb
         cat <<EOF > ~/.aws/bb/config
         [profile bb-apps-prd-devops]
         output=json
         region=us-east-1
-        role_arn=arn:aws:iam::${{ secrets.AWS_PRD_ACCOUNT_ID }}:role/DeployMaster
+        role_arn=arn:aws:iam::${{ inputs.aws_prd_account_id }}:role/DeployMaster
         source_profile=bb-security
 
         [profile bb-apps-devstg-devops]
         output=json
         region=us-east-1
-        role_arn=arn:aws:iam::${{ secrets.AWS_DEVSTG_ACCOUNT_ID }}:role/DeployMaster
+        role_arn=arn:aws:iam::${{ inputs.aws_devstg_account_id }}:role/DeployMaster
         source_profile=bb-security
 
         [profile bb-shared-devops]
         output=json
         region=us-east-1
-        role_arn=arn:aws:iam::${{ secrets.AWS_SHARED_ACCOUNT_ID }}:role/DeployMaster
+        role_arn=arn:aws:iam::${{ inputs.aws_shared_account_id }}:role/DeployMaster
         source_profile=bb-security
         EOF
 
         cat <<EOF > ~/.aws/bb/credentials
         [bb-security]
-        aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_access_key_id=${{ inputs.aws_access_key_id }}
+        aws_secret_access_key=${{ inputs.aws_secret_access_key }}
         region=us-east-1
         output=json
         EOF

@@ -48,7 +48,7 @@ runs:
         role_arn=arn:aws:iam::${{ inputs.aws_devstg_account_id }}:role/DeployMaster
         source_profile=bb-security
 
-        [profile bb-apps-network-devops]
+        [profile bb-network-devops]
         output=json
         region=us-east-1
         role_arn=arn:aws:iam::${{ inputs.aws_network_account_id }}:role/DeployMaster

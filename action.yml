@@ -14,6 +14,10 @@ inputs:
     description: 'AWS SHARED Account ID'
     required: true
     default: '0000000000'
+  aws_security_account_id:
+    description: 'AWS SECURITY Account ID'
+    required: false
+    default: '0000000000'
   aws_network_account_id:
     description: 'AWS NETWORK Account ID'
     required: true
@@ -58,6 +62,12 @@ runs:
         output=json
         region=us-east-1
         role_arn=arn:aws:iam::${{ inputs.aws_shared_account_id }}:role/DeployMaster
+        source_profile=bb-security
+
+        [profile bb-security-devops]
+        output=json
+        region=us-east-1
+        role_arn=arn:aws:iam::${{ inputs.aws_security_account_id }}:role/DeployMaster
         source_profile=bb-security
         EOF
 
